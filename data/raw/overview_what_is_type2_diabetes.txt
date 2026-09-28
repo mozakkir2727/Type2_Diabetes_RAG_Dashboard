@@ -1,0 +1,50 @@
+SOURCE_NAME: NIDDK-style Overview (paraphrased summary, not verbatim)
+
+What Type 2 Diabetes Is
+
+Type 2 diabetes is a chronic condition that affects how the body turns food
+into energy. Normally, the pancreas releases insulin, a hormone that helps
+glucose (sugar) from food move out of the bloodstream and into cells, where
+it is used for energy. In type 2 diabetes, the body either does not produce
+enough insulin or the cells stop responding to insulin normally, a state
+often called insulin resistance. Over time this causes glucose to build up
+in the blood instead of being absorbed by cells, which can lead to serious
+health problems if left unmanaged.
+
+Type 2 diabetes is the most common form of diabetes, accounting for the
+large majority of diagnosed cases worldwide. It typically develops gradually
+over years, and many people have it for a long time before symptoms appear
+or before they are diagnosed.
+
+Common Risk Factors
+
+Risk factors generally include being overweight or having obesity, being
+age 45 or older, having a parent or sibling with type 2 diabetes, being
+physically inactive, having had gestational diabetes during pregnancy, and
+belonging to certain ethnic and racial groups that carry higher population
+level risk, including Black, Hispanic/Latino, American Indian, and some
+Asian American and Pacific Islander populations. Having prediabetes, a
+condition where blood sugar is elevated but not yet high enough for a
+diabetes diagnosis, is also a major risk factor for eventually developing
+type 2 diabetes.
+
+Common Symptoms
+
+Symptoms can include increased thirst, frequent urination, unusual fatigue,
+blurred vision, slow-healing sores, and unexplained weight loss. Because
+symptoms can be mild or develop slowly, some people do not notice them for
+years.
+
+General Management Approaches
+
+Management commonly combines lifestyle changes (nutrition, physical
+activity, weight management), blood sugar monitoring, and, when needed,
+medications prescribed by a healthcare provider, which may include oral
+medications or insulin. Treatment plans are individualized by a person's
+own healthcare team based on their health history, lab results, and other
+personal factors. This document intentionally does not provide dosing or
+medication-adjustment guidance, since that requires a licensed clinician
+who knows the individual patient.
+
+This is general public-health information only and does not replace advice
+from a qualified healthcare provider.

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Type 2 Diabetes Info Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /*
+    This page draws every chart itself with plain CSS/SVG (see the
+    charts.js block at the bottom) instead of pulling in a charting
+    library from a CDN. That's a deliberate choice: a blocked or slow
+    CDN request used to take the whole dashboard down with it. Nothing
+    on this page depends on the network except the Google Font, which
+    fails silently and falls back to the system sans-serif/serif if
+    it can't load.
+  */
+  :root {
+    --bg: #0D1520;
+    --bg-grad: radial-gradient(circle at 12% 0%, #16283C 0%, #0D1520 45%), radial-gradient(circle at 100% 100%, #142234 0%, #0D1520 55%);
+    --panel: #131F30;
+    --panel-2: #162335;
+    --border: #23324A;
+    --text: #E7ECF3;
+    --text-soft: #8C9CB4;
+    --text-faint: #5D6E88;
+
+    --teal: #2FD4B4;
+    --teal-soft: rgba(47, 212, 180, 0.14);
+    --blue: #5B9CFF;
+    --blue-soft: rgba(91, 156, 255, 0.14);
+    --amber: #F2B84B;
+    --amber-soft: rgba(242, 184, 75, 0.14);
+    --rose: #FF7A8A;
+    --rose-soft: rgba(255, 122, 138, 0.14);
+    --violet: #B18CFF;
+    --violet-soft: rgba(177, 140, 255, 0.14);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg-grad), var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, Segoe UI, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px 28px 60px;
+  }
+
+  a { color: inherit; }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand .mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lora', Georgia, serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: #06140F;
+    flex: none;
+  }
+  .brand h1 {
+    font-family: 'Lora', Georgia, serif;
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .brand p {
+    margin: 1px 0 0;
+    font-size: 12.5px;
+    color: var(--text-soft);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .nav-link {
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-soft);
+    padding: 9px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .nav-link:hover { color: var(--text); border-color: #33455F; }
+
+  button.run {
+    background: linear-gradient(135deg, var(--teal), #21B79B);
+    color: #06140F;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.run:hover { filter: brightness(1.08); }
+  button.run:disabled { background: #445468; color: #9AA9BE; cursor: default; }
+
+  /* ---------- Config strip ---------- */
+  .config-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .config-chip {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .config-chip .k {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-faint);
+    font-weight: 600;
+  }
+  .config-chip .v {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .kpi-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .kpi-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .kpi-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+  .kpi-icon svg { width: 18px; height: 18px; }
+  .kpi-text .val {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .kpi-text .lbl {
+    font-size: 11px;
+    color: var(--text-soft);
+    margin-top: 3px;
+    line-height: 1.3;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px 14px;
+    min-width: 0;
+  }
+  .panel.span2 { grid-column: span 2; }
+  .panel.span3 { grid-column: span 3; }
+  .panel h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 2px;
+    color: var(--text);
+  }
+  .panel .sub {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin: 0 0 12px;
+  }
+
+  /* ---------- Pipeline strip ---------- */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  .pipe-step {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 12px;
+    position: relative;
+  }
+  .pipe-step .n {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.04em;
+  }
+  .pipe-step .t {
+    font-size: 12.5px;
+    font-weight: 600;
+    margin: 3px 0 2px;
+  }
+  .pipe-step .d {
+    font-size: 10.5px;
+    color: var(--text-soft);
+    line-height: 1.35;
+  }
+  .pipe-step::after {
+    content: "\2192";
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    font-size: 13px;
+  }
+  .pipe-step:last-child::after { content: ""; }
+
+  /* ---------- Custom CSS/SVG chart widgets ---------- */
+
+  /* Vertical bar chart (percentages) */
+  .vbars {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 170px;
+    padding-top: 22px;
+  }
+  .vbar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+  }
+  .vbar-track {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .vbar-fill {
+    width: 60%;
+    min-width: 18px;
+    border-radius: 5px 5px 2px 2px;
+    height: 0;
+    transition: height 0.7s cubic-bezier(.2,.8,.2,1);
+    position: relative;
+  }
+  .vbar-fill .val {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .vbar-label {
+    font-size: 10px;
+    color: var(--text-soft);
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.25;
+    max-width: 72px;
+  }
+
+  /* Horizontal bar chart (counts) */
+  .hbars { display: flex; flex-direction: column; gap: 12px; }
+  .hbar-row { display: flex; align-items: center; gap: 10px; }
+  .hbar-label { width: 96px; flex: none; font-size: 11.5px; color: var(--text-soft); text-align: right; }
+  .hbar-track { flex: 1; background: rgba(140,156,180,0.08); border-radius: 5px; height: 16px; position: relative; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 5px; width: 0; transition: width 0.7s cubic-bezier(.2,.8,.2,1); }
+  .hbar-val { width: 22px; flex: none; font-size: 12px; font-weight: 600; }
+
+  /* Stacked horizontal bars (chunks by source) */
+  .stack-rows { display: flex; flex-direction: column; gap: 14px; }
+  .stack-row { display: flex; align-items: center; gap: 10px; }
+  .stack-label { width: 190px; flex: none; font-size: 11.5px; color: var(--text-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stack-track { flex: 1; display: flex; height: 18px; border-radius: 5px; overflow: hidden; background: rgba(140,156,180,0.08); }
+  .stack-seg { height: 100%; width: 0; transition: width 0.7s cubic-bezier(.2,.8,.2,1); }
+  .stack-total { width: 26px; flex: none; font-size: 12px; font-weight: 600; text-align: right; }
+
+  /* Donut (pure SVG) */
+  .donut-wrap { display: flex; align-items: center; gap: 20px; justify-content: center; padding: 6px 0; }
+  .donut-center-val { font-family: 'Lora', Georgia, serif; font-size: 22px; font-weight: 600; }
+  .donut-center-lbl { font-size: 9.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+  .donut-legend .item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-soft); }
+  .donut-legend .sw { width: 9px; height: 9px; border-radius: 3px; flex: none; }
+  .donut-legend .num { color: var(--text); font-weight: 600; margin-left: 3px; }
+
+  .legend-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 11px; color: var(--text-soft); }
+  .legend-row .item { display: flex; align-items: center; gap: 6px; }
+  .legend-row .sw { width: 8px; height: 8px; border-radius: 2px; }
+
+
+  /* ---------- Quality & cost tiles ---------- */
+  .section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-faint); margin: 0 0 10px; }
+  .qtiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+  .qtile { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; min-width: 0; }
+  .qtile-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .qtile-head .kpi-icon { width: 32px; height: 32px; border-radius: 9px; }
+  .qtile-head .kpi-icon svg { width: 16px; height: 16px; }
+  .qtile-title { font-size: 13px; font-weight: 600; flex: 1; }
+  .badge { font-size: 9.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; white-space: nowrap; }
+  .badge.live { background: var(--teal-soft); color: var(--teal); }
+  .badge.offline { background: var(--blue-soft); color: var(--blue); }
+  .badge.est { background: var(--amber-soft); color: var(--amber); }
+  .badge.wait { background: rgba(140,156,180,0.14); color: var(--text-soft); }
+  .qtile-val { font-family: 'Lora', Georgia, serif; font-size: 28px; font-weight: 600; line-height: 1.1; }
+  .qtile-val.muted { color: var(--text-faint); }
+  .qtile-sub { font-size: 11.5px; color: var(--text-soft); margin-top: 6px; line-height: 1.4; }
+  .qtile-note { font-size: 10.5px; color: var(--text-faint); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); line-height: 1.4; }
+
+  table.recent { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.recent th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  table.recent td { padding: 8px 10px; border-bottom: 1px solid rgba(35,50,74,0.6); color: var(--text); }
+  table.recent tr:last-child td { border-bottom: none; }
+  table.recent td.dim { color: var(--text-soft); }
+  .table-scroll { overflow-x: auto; }
+
+  /* ---------- Status ---------- */
+  .status-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-soft); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+  .dot.busy { background: var(--amber); animation: pulse 1s infinite ease-in-out; }
+  .dot.error { background: var(--rose); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  .error-banner {
+    display: none;
+    background: rgba(255,122,138,0.1);
+    border: 1px solid rgba(255,122,138,0.35);
+    color: #FFB4BE;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  footer {
+    margin-top: 26px;
+    font-size: 12px;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    .kpi-rail { flex-direction: row; flex-wrap: wrap; }
+    .kpi-card { flex: 1 1 150px; }
+    .qtiles { grid-template-columns: repeat(2, 1fr); }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .panel.span2, .panel.span3 { grid-column: span 2; }
+    .pipeline { grid-template-columns: repeat(3, 1fr); }
+    .pipe-step::after { display: none; }
+  }
+  @media (max-width: 620px) {
+    .qtiles { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+    .panel.span2, .panel.span3 { grid-column: span 1; }
+    .pipeline { grid-template-columns: repeat(2, 1fr); }
+    .stack-label { width: 110px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">+</div>
+      <div>
+        <h1>Type 2 Diabetes RAG — Dashboard</h1>
+        <p>Live pipeline stats and safety evaluation, computed from the running system</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="status-row"><span class="dot" id="run-dot"></span><span id="run-status-text">Loading…</span></span>
+      <button class="run" id="run-btn" onclick="loadEverything()">Re-run Evaluation</button>
+      <a class="nav-link" href="/">&larr; Back to Assistant</a>
+    </div>
+  </div>
+
+  <div class="error-banner" id="error-banner"></div>
+
+  <div class="config-strip" id="config-strip"></div>
+
+  <p class="section-title">Answer quality &amp; cost</p>
+  <div class="qtiles" id="quality-tiles"></div>
+
+  <div class="layout">
+
+    <div class="kpi-rail" id="kpi-rail"></div>
+
+    <div>
+      <div class="grid" id="chart-grid">
+
+        <div class="panel span2">
+          <h3>How a question is answered</h3>
+          <p class="sub">Every request passes through the same six-step pipeline — nothing is skipped for speed</p>
+          <div class="pipeline">
+            <div class="pipe-step"><div class="n">01</div><div class="t">Load index</div><div class="d">TF‑IDF vectors built from all chunks at startup</div></div>
+            <div class="pipe-step"><div class="n">02</div><div class="t">Screen question</div><div class="d">Regex check refuses personal medical questions</div></div>
+            <div class="pipe-step"><div class="n">03</div><div class="t">Retrieve</div><div class="d">Top‑K chunks by cosine similarity, min‑score cutoff</div></div>
+            <div class="pipe-step"><div class="n">04</div><div class="t">Generate</div><div class="d">Hugging Face model answers using only retrieved text</div></div>
+            <div class="pipe-step"><div class="n">05</div><div class="t">Redact</div><div class="d">Second PII pass on the model's own output</div></div>
+            <div class="pipe-step"><div class="n">06</div><div class="t">Respond</div><div class="d">Answer + cited sources returned to the page</div></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>PII protection</h3>
+          <p class="sub">Adversarial questions that leaked nothing</p>
+          <div id="chart-donut"></div>
+        </div>
+
+        <div class="panel span2">
+          <h3>Protected configuration — all metrics</h3>
+          <p class="sub">Redaction active at build time and on every answer (recommended, real‑world setup)</p>
+          <div id="chart-metrics" class="vbars"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Test coverage by category</h3>
+          <p class="sub">Questions in the fixed evaluation set</p>
+          <div id="chart-categories" class="hbars"></div>
+        </div>
+
+        <div class="panel span2">
+          <h3>Knowledge base: chunks by source document</h3>
+          <p class="sub">Retrieved chunks and how many carry injected fake‑PII test cases</p>
+          <div id="chart-sources" class="stack-rows"></div>
+          <div class="legend-row">
+            <span class="item"><span class="sw" style="background:var(--blue)"></span>Clean chunks</span>
+            <span class="item"><span class="sw" style="background:var(--rose)"></span>Chunks with injected PII</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>With vs. without redaction</h3>
+          <p class="sub">PII protection rate, safety layers on vs. deliberately off</p>
+          <div id="chart-compare" class="vbars"></div>
+        </div>
+
+        <div class="panel span3">
+          <h3>Recent answered questions</h3>
+          <p class="sub">Per-question numbers from the assistant page (newest first). Only numbers are stored, never the question or answer text.</p>
+          <div class="table-scroll" id="recent-table"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    
+  </footer>
+
+</div>
+
+<script>
+  const COLORS = {
+    teal: '#2FD4B4', blue: '#5B9CFF', amber: '#F2B84B', rose: '#FF7A8A', violet: '#B18CFF',
+    roseSoft: 'rgba(255,122,138,0.55)',
+  };
+
+  const KPI_ICONS = {
+    chunks: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg>',
+    docs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>',
+    target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.5"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>',
+    hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v6"/><path d="M5 12l7-7 7 7"/><path d="M5 21h14"/></svg>',
+    ruler: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="1"/><path d="M7 8v3M11 8v3M15 8v3"/></svg>',
+    spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z"/></svg>',
+    anchor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M12 7v13M5 13a7 7 0 0 0 14 0M8 11h8"/></svg>',
+    coins: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function kpiCard(icon, color, softBg, value, label) {
+    return `
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:${softBg}; color:${color};">${icon}</div>
+        <div class="kpi-text">
+          <div class="val">${esc(value)}</div>
+          <div class="lbl">${esc(label)}</div>
+        </div>
+      </div>`;
+  }
+
+  function configChip(label, value) {
+    return `<div class="config-chip"><div class="k">${esc(label)}</div><div class="v" title="${esc(value)}">${esc(value)}</div></div>`;
+  }
+
+  /* ---- Chart widget builders (pure CSS/SVG, no library) ---- */
+
+  function buildVBars(el, items) {
+    // items: [{label, value (0-100), color}]
+    el.innerHTML = items.map(it => `
+      <div class="vbar-col">
+        <div class="vbar-track">
+          <div class="vbar-fill" style="background:${it.color};">
+            <span class="val" style="color:${it.color}">${it.value.toFixed(0)}%</span>
+          </div>
+        </div>
+        <div class="vbar-label">${esc(it.label)}</div>
+      </div>
+    `).join('');
+    // animate after insertion
+    requestAnimationFrame(() => {
+      el.querySelectorAll('.vbar-fill').forEach((bar, i) => {
+        bar.style.height = Math.max(items[i].value, 2) + '%';
+      });
+    });
+  }
+
+  function buildHBars(el, items) {
+    // items: [{label, value, color}]
+    const max = Math.max(1, ...items.map(i => i.value));
+    el.innerHTML = items.map(it => `
+      <div class="hbar-row">
+        <div class="hbar-label">${esc(it.label)}</div>
+        <div class="hbar-track"><div class="hbar-fill" style="background:${it.color};"></div></div>
+        <div class="hbar-val">${it.value}</div>
+      </div>
+    `).join('');
+    requestAnimationFrame(() => {
+      el.querySelectorAll('.hbar-fill').forEach((bar, i) => {
+        bar.style.width = (items[i].value / max * 100) + '%';
+      });
+    });
+  }
+
+  function buildStackedRows(el, groups) {
+    // groups: [{label, total, segments:[{value, color}]}]
+    const max = Math.max(1, ...groups.map(g => g.total));
+    el.innerHTML = groups.map(g => `
+      <div class="stack-row">
+        <div class="stack-label">${esc(g.label)}</div>
+        <div class="stack-track">
+          ${g.segments.map(s => `<div class="stack-seg" data-w="${g.total ? (s.value / max * 100) : 0}" style="background:${s.color};"></div>`).join('')}
+        </div>
+        <div class="stack-total">${g.total}</div>
+      </div>
+    `).join('');
+    requestAnimationFrame(() => {
+      el.querySelectorAll('.stack-seg').forEach(seg => {
+        seg.style.width = seg.getAttribute('data-w') + '%';
+      });
+    });
+  }
+
+  function buildDonut(el, segments, centerLabel) {
+    // segments: [{label, value, color}] values are percentages summing to <=100
+    const size = 120, stroke = 16, r = (size - stroke) / 2, c = 2 * Math.PI * r;
+    let offset = 0;
+    const arcs = segments.map(s => {
+      const frac = Math.max(0, Math.min(100, s.value)) / 100;
+      const dash = frac * c;
+      const circle = `<circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${s.color}"
+        stroke-width="${stroke}" stroke-dasharray="${dash} ${c - dash}"
+        stroke-dashoffset="${-offset}" transform="rotate(-90 ${size/2} ${size/2})" stroke-linecap="butt"/>`;
+      offset += dash;
+      return circle;
+    }).join('');
+
+    const primary = segments[0] ? segments[0].value.toFixed(0) : '0';
+
+    el.innerHTML = `
+      <div class="donut-wrap">
+        <div style="position:relative; width:${size}px; height:${size}px;">
+          <svg width="${size}" height="${size}">
+            <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(140,156,180,0.12)" stroke-width="${stroke}"/>
+            ${arcs}
+          </svg>
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div class="donut-center-val">${primary}%</div>
+            <div class="donut-center-lbl">${esc(centerLabel || '')}</div>
+          </div>
+        </div>
+        <div class="donut-legend">
+          ${segments.map(s => `<div class="item"><span class="sw" style="background:${s.color}"></span>${esc(s.label)} <span class="num">${s.value.toFixed(0)}%</span></div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+
+  /* ---- Quality & cost tiles ---- */
+
+  function fmtMs(ms) {
+    if (ms === null || ms === undefined) return '—';
+    return ms >= 1000 ? (ms / 1000).toFixed(2) + ' s' : Math.round(ms) + ' ms';
+  }
+  function fmtNum(n) {
+    return (n === null || n === undefined) ? '—' : Math.round(n).toLocaleString();
+  }
+  function fmtPct(n) {
+    return (n === null || n === undefined) ? '—' : Math.round(n) + '%';
+  }
+
+  function qTile(icon, color, soft, title, badgeClass, badgeText, value, sub, note) {
+    const muted = value === '—' ? ' muted' : '';
+    return `
+      <div class="qtile">
+        <div class="qtile-head">
+          <div class="kpi-icon" style="background:${soft}; color:${color};">${icon}</div>
+          <div class="qtile-title">${esc(title)}</div>
+          <span class="badge ${badgeClass}">${esc(badgeText)}</span>
+        </div>
+        <div class="qtile-val${muted}">${esc(value)}</div>
+        <div class="qtile-sub">${sub}</div>
+        <div class="qtile-note">${note}</div>
+      </div>`;
+  }
+
+  function renderQualityTiles(stats, p) {
+    const live = stats.live;
+    const has = live.sample_count > 0;
+    const n = live.sample_count;
+    const liveBadge = `Live · ${n} answer${n === 1 ? '' : 's'}`;
+    const waitMsg = 'Ask a question on the assistant page, then click Re-run Evaluation.';
+
+    // Answer relevance: live if available, otherwise the offline check
+    const relevance = has && live.avg_relevance !== null
+      ? qTile(KPI_ICONS.spark, COLORS.violet, 'rgba(177,140,255,0.14)', 'Answer relevance', 'live', liveBadge,
+          fmtPct(live.avg_relevance), 'Share of the question\u2019s key terms the model\u2019s answer covers.',
+          'Offline check on the test set: ' + fmtPct(p.avg_answer_relevance) + ' (raw retrieved text).')
+      : qTile(KPI_ICONS.spark, COLORS.violet, 'rgba(177,140,255,0.14)', 'Answer relevance', 'offline', 'Offline eval',
+          fmtPct(p.avg_answer_relevance), 'Share of the question\u2019s key terms found in the retrieved answer text.',
+          'Measured on the test questions. Live model answers will appear here once asked.');
+
+    // Faithfulness: only meaningful for real model output
+    const faith = has && live.avg_faithfulness !== null
+      ? qTile(KPI_ICONS.anchor, COLORS.teal, 'rgba(47,212,180,0.14)', 'Faithfulness', 'live', liveBadge,
+          fmtPct(live.avg_faithfulness), 'Share of answer sentences supported by the retrieved sources.',
+          'Word-overlap heuristic \u2014 a low value hints the model added facts not in the sources.')
+      : qTile(KPI_ICONS.anchor, COLORS.teal, 'rgba(47,212,180,0.14)', 'Faithfulness', 'wait', 'Needs live data',
+          '—', 'Share of answer sentences supported by the retrieved sources.',
+          'Only measured on real model answers (the offline test just returns source text, which would trivially score 100%). ' + waitMsg);
+
+    // Latency: live end-to-end, with the offline retrieval number always shown
+    const latency = has
+      ? qTile(KPI_ICONS.clock, COLORS.amber, 'rgba(242,184,75,0.14)', 'Avg latency', 'live', liveBadge,
+          fmtMs(live.avg_latency_ms), 'End-to-end per answer, including the Hugging Face call. p95: ' + fmtMs(live.p95_latency_ms) + '.',
+          'Retrieval + safety checks alone (offline test): ' + fmtMs(p.avg_latency_ms) + ' per question.')
+      : qTile(KPI_ICONS.clock, COLORS.amber, 'rgba(242,184,75,0.14)', 'Avg latency', 'offline', 'Offline eval',
+          fmtMs(p.avg_latency_ms), 'Retrieval + safety checks per question (no model call).',
+          'End-to-end latency including the model appears once live questions are asked.');
+
+    // Token usage
+    const tokens = has
+      ? qTile(KPI_ICONS.coins, COLORS.blue, 'rgba(91,156,255,0.14)', 'Token usage', live.any_tokens_estimated ? 'est' : 'live',
+          live.any_tokens_estimated ? 'Partly estimated' : liveBadge,
+          fmtNum(live.avg_total_tokens) + ' / answer',
+          fmtNum(live.avg_prompt_tokens) + ' prompt + ' + fmtNum(live.avg_completion_tokens) + ' completion. Total so far: ' + fmtNum(live.total_tokens) + '.',
+          live.any_tokens_estimated ? 'Some counts are estimates (~4 characters per token) because the API did not report usage.' : 'Exact counts reported by the Hugging Face API.')
+      : qTile(KPI_ICONS.coins, COLORS.blue, 'rgba(91,156,255,0.14)', 'Token usage', 'est', 'Estimated',
+          fmtNum(p.avg_est_prompt_tokens) + ' / prompt', 'Estimated prompt size (question + retrieved context) per answerable test question.',
+          'Rough estimate (~4 characters per token). Real prompt + completion counts appear once live questions are asked.');
+
+    document.getElementById('quality-tiles').innerHTML = [relevance, faith, latency, tokens].join('');
+  }
+
+  function renderRecent(live) {
+    const el = document.getElementById('recent-table');
+    if (!live.recent.length) {
+      el.innerHTML = '<div style="color:var(--text-faint);font-size:12.5px;padding:18px 0;">No live answers yet. Ask a question on the assistant page and it will show up here.</div>';
+      return;
+    }
+    el.innerHTML = `
+      <table class="recent">
+        <thead><tr><th>Latency</th><th>Prompt tokens</th><th>Completion tokens</th><th>Total tokens</th><th>Relevance</th><th>Faithfulness</th></tr></thead>
+        <tbody>${live.recent.map(r => `
+          <tr>
+            <td>${fmtMs(r.latency_ms)}</td>
+            <td class="dim">${fmtNum(r.prompt_tokens)}${r.tokens_estimated ? ' ~' : ''}</td>
+            <td class="dim">${fmtNum(r.completion_tokens)}${r.tokens_estimated ? ' ~' : ''}</td>
+            <td>${fmtNum(r.total_tokens)}${r.tokens_estimated ? ' ~' : ''}</td>
+            <td>${fmtPct(r.relevance)}</td>
+            <td>${fmtPct(r.faithfulness)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  /* ---- Data loading ---- */
+
+  async function loadEverything() {
+    const btn = document.getElementById('run-btn');
+    const dot = document.getElementById('run-dot');
+    const statusText = document.getElementById('run-status-text');
+    const errorBanner = document.getElementById('error-banner');
+
+    btn.disabled = true;
+    btn.textContent = 'Running…';
+    dot.className = 'dot busy';
+    statusText.textContent = 'Computing stats and running the evaluation set…';
+    errorBanner.style.display = 'none';
+
+    try {
+      const [statsRes, perfRes] = await Promise.all([
+        fetch('/api/dataset-stats'),
+        fetch('/api/performance'),
+      ]);
+      if (!statsRes.ok) throw new Error('dataset-stats returned ' + statsRes.status);
+      if (!perfRes.ok) throw new Error('performance returned ' + perfRes.status);
+      const stats = await statsRes.json();
+      const perf = await perfRes.json();
+
+      renderConfigStrip(stats);
+      renderKpis(stats, perf.protected);
+      renderCharts(stats, perf);
+      renderQualityTiles(stats, perf.protected);
+      renderRecent(stats.live);
+
+      dot.className = 'dot';
+      statusText.textContent = 'Last run: just now — all data live from the running system.';
+    } catch (err) {
+      dot.className = 'dot error';
+      statusText.textContent = "Couldn't load dashboard data.";
+      errorBanner.style.display = 'block';
+      errorBanner.textContent = "Couldn't reach the server or an API call failed (" + err.message + "). Make sure app.py is running and reload this page.";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Re-run Evaluation';
+    }
+  }
+
+  function renderConfigStrip(stats) {
+    const el = document.getElementById('config-strip');
+    const c = stats.config;
+    el.innerHTML = [
+      configChip('Retrieval model', 'TF‑IDF + cosine'),
+      configChip('Top‑K chunks', c.top_k),
+      configChip('Min. similarity', c.min_similarity),
+      configChip('Chunk size / overlap', `${c.chunk_size} / ${c.chunk_overlap} chars`),
+      configChip('PII injection rate', c.pii_injection_rate + '%'),
+      configChip('Generation model', c.hf_model),
+    ].join('');
+  }
+
+  function renderKpis(stats, p) {
+    const el = document.getElementById('kpi-rail');
+    el.innerHTML = [
+      kpiCard(KPI_ICONS.chunks, COLORS.blue, 'rgba(91,156,255,0.14)', stats.total_chunks, 'Chunks in knowledge base'),
+      kpiCard(KPI_ICONS.docs, COLORS.violet, 'rgba(177,140,255,0.14)', stats.total_sources, 'Source documents'),
+      kpiCard(KPI_ICONS.ruler, '#C3CEDE', 'rgba(140,156,180,0.14)', stats.avg_chunk_length, 'Avg. chunk length (chars)'),
+      kpiCard(KPI_ICONS.shield, COLORS.teal, 'rgba(47,212,180,0.14)', p.pii_protection_rate.toFixed(0) + '%', 'PII protection rate'),
+      kpiCard(KPI_ICONS.target, COLORS.blue, 'rgba(91,156,255,0.14)', p.retrieval_accuracy.toFixed(0) + '%', 'Retrieval accuracy'),
+      kpiCard(KPI_ICONS.hand, COLORS.amber, 'rgba(242,184,75,0.14)', p.personal_advice_refusal.toFixed(0) + '%', 'Personal‑advice refusal'),
+      kpiCard(KPI_ICONS.check, COLORS.rose, 'rgba(255,122,138,0.14)', p.out_of_scope_handling.toFixed(0) + '%', 'Out‑of‑scope handling'),
+    ].join('');
+  }
+
+  function renderCharts(stats, perf) {
+    const p = perf.protected, v = perf.vulnerable;
+
+    buildDonut(document.getElementById('chart-donut'), [
+      { label: 'Protected', value: p.pii_protection_rate, color: COLORS.teal },
+      { label: 'Leaked', value: p.pii_leak_rate, color: COLORS.roseSoft },
+    ], 'protected');
+
+    buildVBars(document.getElementById('chart-metrics'), [
+      { label: 'Retrieval accuracy', value: p.retrieval_accuracy, color: COLORS.teal },
+      { label: 'Answer coverage', value: p.answer_coverage, color: COLORS.blue },
+      { label: 'Out‑of‑scope handling', value: p.out_of_scope_handling, color: COLORS.violet },
+      { label: 'Personal‑advice refusal', value: p.personal_advice_refusal, color: COLORS.amber },
+      { label: 'PII protection', value: p.pii_protection_rate, color: COLORS.rose },
+    ]);
+
+    buildHBars(document.getElementById('chart-categories'), [
+      { label: 'Normal', value: stats.question_counts.normal, color: COLORS.blue },
+      { label: 'Out‑of‑scope', value: stats.question_counts.out_of_scope, color: COLORS.violet },
+      { label: 'PII probing', value: stats.question_counts.trying_to_get_pii, color: COLORS.rose },
+      { label: 'Personal advice', value: stats.question_counts.personal_advice, color: COLORS.amber },
+    ]);
+
+    buildStackedRows(document.getElementById('chart-sources'), stats.sources.map(s => ({
+      label: s.source.replace('.txt', ''),
+      total: s.chunk_count,
+      segments: [
+        { value: s.chunk_count - s.pii_count, color: COLORS.blue },
+        { value: s.pii_count, color: COLORS.rose },
+      ],
+    })));
+
+    buildVBars(document.getElementById('chart-compare'), [
+      { label: 'Protected', value: p.pii_protection_rate, color: COLORS.teal },
+      { label: 'Vulnerable', value: v.pii_protection_rate, color: COLORS.roseSoft },
+    ]);
+  }
+
+  loadEverything();
+</script>
+
+</body>
+</html>

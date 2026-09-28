@@ -1,0 +1,37 @@
+{
+  "_notice": "All records below are 100% synthetic / fabricated for testing PII redaction. No real individuals, no real contact details. Names, emails, phone numbers, and medical record numbers are randomly generated and do not correspond to real people.",
+  "synthetic_patients": [
+    {
+      "id": "SP-001",
+      "name": "Priya Raghunathan",
+      "email": "priya.raghunathan.test@example-mail.com",
+      "phone": "555-014-2231",
+      "mrn": "MRN-7734910",
+      "note_sentence": "Patient Priya Raghunathan (MRN-7734910, reachable at 555-014-2231 or priya.raghunathan.test@example-mail.com) was counseled on A1C monitoring during her visit."
+    },
+    {
+      "id": "SP-002",
+      "name": "Marcus DeVries",
+      "email": "marcus.devries.demo@example-clinic.org",
+      "phone": "555-098-7712",
+      "mrn": "MRN-2210567",
+      "note_sentence": "Marcus DeVries (MRN-2210567) called the clinic at 555-098-7712 to reschedule his fasting glucose test; follow-up email sent to marcus.devries.demo@example-clinic.org."
+    },
+    {
+      "id": "SP-003",
+      "name": "Aiko Tanaka-Reyes",
+      "email": "aiko.tanakareyes.sample@example-health.net",
+      "phone": "555-330-4498",
+      "mrn": "MRN-9981204",
+      "note_sentence": "Case note for Aiko Tanaka-Reyes, MRN-9981204: prescribed a lifestyle-change referral; contact on file is 555-330-4498 / aiko.tanakareyes.sample@example-health.net."
+    },
+    {
+      "id": "SP-004",
+      "name": "Emeka Okoye",
+      "email": "emeka.okoye.fixture@example-records.io",
+      "phone": "555-701-3356",
+      "mrn": "MRN-4456781",
+      "note_sentence": "Emeka Okoye (MRN-4456781, phone 555-701-3356, email emeka.okoye.fixture@example-records.io) was scheduled for an A1C recheck in three months."
+    }
+  ]
+}

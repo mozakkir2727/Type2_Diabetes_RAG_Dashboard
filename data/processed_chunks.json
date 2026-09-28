@@ -1,0 +1,57 @@
+[
+  {
+    "source": "overview_what_is_type2_diabetes.txt",
+    "text": "SOURCE_NAME: NIDDK-style Overview (paraphrased summary, not verbatim)\n\nWhat Type 2 Diabetes Is\n\nType 2 diabetes is a chronic condition that affects how the body turns food\ninto energy. Normally, the pancreas releases insulin, a hormone that helps\nglucose (sugar) from food move out of the bloodstream and into cells, where\nit is used for energy. In type 2 diabetes, the body either does not produce\nenough insulin or the cells stop responding to insulin normally, a state\noften called insulin resistance. Over time this causes glucose to build up\nin the blood instead of being absorbed by cells, which can lead to serious\nhealth problems if left unmanaged.\n\nType 2 diabetes is the most common form of diabetes, accounting for the\nlarge majority of diagnosed cases worldwide. It typically develops gra",
+    "has_pii": false
+  },
+  {
+    "source": "overview_what_is_type2_diabetes.txt",
+    "text": "most common form of diabetes, accounting for the\nlarge majority of diagnosed cases worldwide. It typically develops gradually\nover years, and many people have it for a long time before symptoms appear\nor before they are diagnosed.\n\nCommon Risk Factors\n\nRisk factors generally include being overweight or having obesity, being\nage 45 or older, having a parent or sibling with type 2 diabetes, being\nphysically inactive, having had gestational diabetes during pregnancy, and\nbelonging to certain ethnic and racial groups that carry higher population\nlevel risk, including Black, Hispanic/Latino, American Indian, and some\nAsian American and Pacific Islander populations. Having prediabetes, a\ncondition where blood sugar is elevated but not yet high enough for a\ndiabetes diagnosis, is also a major ri\n\nCase note for [REDACTED_NAME], [REDACTED_ID]: prescribed a lifestyle-change referral; contact on file is [REDACTED_PHONE] / [REDACTED_EMAIL]",
+    "has_pii": true
+  },
+  {
+    "source": "overview_what_is_type2_diabetes.txt",
+    "text": "diabetes, a\ncondition where blood sugar is elevated but not yet high enough for a\ndiabetes diagnosis, is also a major risk factor for eventually developing\ntype 2 diabetes.\n\nCommon Symptoms\n\nSymptoms can include increased thirst, frequent urination, unusual fatigue,\nblurred vision, slow-healing sores, and unexplained weight loss. Because\nsymptoms can be mild or develop slowly, some people do not notice them for\nyears.\n\nGeneral Management Approaches\n\nManagement commonly combines lifestyle changes (nutrition, physical\nactivity, weight management), blood sugar monitoring, and, when needed,\nmedications prescribed by a healthcare provider, which may include oral\nmedications or insulin. Treatment plans are individualized by a person's\nown healthcare team based on their health history, lab result\n\n[REDACTED_NAME] ([REDACTED_ID]) called the clinic at [REDACTED_PHONE] to reschedule his fasting glucose test; follow-up email sent to [REDACTED_EMAIL]",
+    "has_pii": true
+  },
+  {
+    "source": "overview_what_is_type2_diabetes.txt",
+    "text": "insulin. Treatment plans are individualized by a person's\nown healthcare team based on their health history, lab results, and other\npersonal factors. This document intentionally does not provide dosing or\nmedication-adjustment guidance, since that requires a licensed clinician\nwho knows the individual patient.\n\nThis is general public-health information only and does not replace advice\nfrom a qualified healthcare provider.",
+    "has_pii": false
+  },
+  {
+    "source": "prevention_and_lifestyle.txt",
+    "text": "SOURCE_NAME: CDC-style Prevention Summary (paraphrased summary, not verbatim)\n\nPreventing or Delaying Type 2 Diabetes\n\nResearch on structured lifestyle-change programs has repeatedly found that\nmodest, sustained changes can meaningfully lower the chance that someone\nwith prediabetes goes on to develop type 2 diabetes. Commonly cited targets\nfrom public-health prevention programs include:\n\n- Losing roughly 5 to 7 percent of body weight if starting above a healthy\n  weight range (for example, about 10 to 14 pounds for someone who weighs\n  200 pounds), achieved gradually rather than through crash dieting.\n- Getting at least 150 minutes per week of moderate-intensity physical\n  activity, such as brisk walking, spread across most days of the week.\n- Choosing more whole grains, vegetables, fruit",
+    "has_pii": false
+  },
+  {
+    "source": "prevention_and_lifestyle.txt",
+    "text": "activity, such as brisk walking, spread across most days of the week.\n- Choosing more whole grains, vegetables, fruits, and lean proteins, while\n  reducing intake of sugary drinks and highly processed foods.\n- Reducing prolonged sitting time and building movement into the day where\n  possible.\n\nStructured group-based lifestyle change programs, often modeled on the\nDiabetes Prevention Program (DPP) research trial, have shown that these\nkinds of changes can reduce the relative risk of progressing from\nprediabetes to type 2 diabetes substantially over several years, in some\nstudies by around half, particularly for participants who reach their\nweight and activity goals.\n\nScreening Recommendations (General Public-Health Guidance)\n\nNational guidance generally recommends that adults begin rout",
+    "has_pii": false
+  },
+  {
+    "source": "prevention_and_lifestyle.txt",
+    "text": "creening Recommendations (General Public-Health Guidance)\n\nNational guidance generally recommends that adults begin routine diabetes\nscreening around age 35, or earlier if they have risk factors such as\noverweight/obesity, a family history of diabetes, high blood pressure,\na history of gestational diabetes, or belonging to a higher-risk racial or\nethnic group. Screening is usually done with a blood test, such as a fasting\nplasma glucose test, an oral glucose tolerance test, or an A1C test, which\nreflects average blood sugar over roughly the past three months.\n\nCommonly cited general reference ranges for A1C are:\n- Below 5.7 percent: normal range\n- 5.7 percent to 6.4 percent: consistent with prediabetes\n- 6.5 percent or higher on two separate tests: consistent with diabetes\n\nThese are gener\n\n[REDACTED_NAME] ([REDACTED_ID], phone [REDACTED_PHONE], email [REDACTED_EMAIL]) was scheduled for an A1C recheck in three months.",
+    "has_pii": true
+  },
+  {
+    "source": "prevention_and_lifestyle.txt",
+    "text": "nt: consistent with prediabetes\n- 6.5 percent or higher on two separate tests: consistent with diabetes\n\nThese are general population reference ranges from public-health sources,\nnot a diagnosis. Only a healthcare provider, using an individual's full\ntest results and history, can diagnose prediabetes or diabetes.\n\nThis is general public-health information only and does not replace advice\nfrom a qualified healthcare provider.\n\nPatient [REDACTED_NAME] ([REDACTED_ID], reachable at [REDACTED_PHONE] or [REDACTED_EMAIL]) was counseled on A1C monitoring during her visit.",
+    "has_pii": true
+  },
+  {
+    "source": "who_global_facts.txt",
+    "text": "SOURCE_NAME: WHO-style Global Fact Summary (paraphrased summary, not verbatim)\n\nGlobal Scale of Diabetes\n\nDiabetes has become one of the most common noncommunicable diseases\nworldwide, with the number of adults living with diabetes having risen\nsubstantially over recent decades, driven largely by increases in type 2\ndiabetes. Low- and middle-income countries have seen the sharpest relative\nincreases in recent years, partly linked to rapid changes in diet, activity\nlevels, and urbanization.\n\nDiabetes is associated with a significantly increased risk of complications\nwhen blood sugar is not well managed over time, including cardiovascular\ndisease, kidney damage, nerve damage, and eye damage that can affect vision.\nBecause of this, early detection through screening and consistent\nmanagement a\n\nPatient [REDACTED_NAME] ([REDACTED_ID], reachable at [REDACTED_PHONE] or [REDACTED_EMAIL]) was counseled on A1C monitoring during her visit.",
+    "has_pii": true
+  },
+  {
+    "source": "who_global_facts.txt",
+    "text": "e, and eye damage that can affect vision.\nBecause of this, early detection through screening and consistent\nmanagement are emphasized as major global public-health priorities.\n\nDiabetes-Related Complications (General Information)\n\n- Cardiovascular: adults with diabetes generally have a higher risk of heart\n  disease and stroke compared with adults without diabetes.\n- Kidneys: diabetes is a leading contributor to chronic kidney disease and\n  kidney failure globally.\n- Eyes: prolonged high blood sugar can damage the small blood vessels in the\n  retina, a condition called diabetic retinopathy, which is a leading cause\n  of vision loss in working-age adults in many countries.\n- Nerves and circulation: nerve damage (neuropathy) and reduced blood flow,\n  especially in the feet, can increase the",
+    "has_pii": false
+  },
+  {
+    "source": "who_global_facts.txt",
+    "text": "- Nerves and circulation: nerve damage (neuropathy) and reduced blood flow,\n  especially in the feet, can increase the risk of injuries and infections\n  that are slow to heal.\n\nPublic-Health Response\n\nInternational guidance generally emphasizes a combination of population-\nlevel prevention (encouraging healthy diets and physical activity, reducing\ntobacco and harmful alcohol use), improving access to affordable screening\nand treatment, and training healthcare systems to manage diabetes and its\ncomplications consistently.\n\nThis is general public-health information only and does not replace advice\nfrom a qualified healthcare provider.",
+    "has_pii": false
+  }
+]

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Type 2 Diabetes Info Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF8F4;
+    --card: #FFFFFF;
+    --border: #E3E0D6;
+    --text: #22303A;
+    --text-soft: #5B6B73;
+    --accent: #146356;
+    --accent-soft: #E6F0EE;
+    --caution: #B8722A;
+    --caution-soft: #FBF0E4;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    margin-bottom: 40px;
+  }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .nav-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    padding-top: 6px;
+  }
+  .nav-link:hover { text-decoration: underline; }
+  header .mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: white;
+    font-family: 'Lora', serif;
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'Lora', serif;
+    font-weight: 600;
+    font-size: 30px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    color: var(--text-soft);
+    margin: 0;
+    font-size: 16px;
+    max-width: 46ch;
+  }
+
+  /* ---------- Ask box ---------- */
+  .ask-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  textarea {
+    width: 100%;
+    min-height: 84px;
+    resize: vertical;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--text);
+    background: #FFFDFB;
+  }
+  textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .ask-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+  }
+  button.ask {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 9px;
+    padding: 11px 22px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  button.ask:hover { background: #0F4F45; }
+  button.ask:disabled { background: #9FB8B3; cursor: default; }
+
+  /* ---------- Example chips ---------- */
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+  .examples span {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-right: 2px;
+    align-self: center;
+  }
+  .chip {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: none;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-family: inherit;
+    font-size: 13.5px;
+    cursor: pointer;
+  }
+  .chip:hover { background: #D9EAE6; }
+
+  /* ---------- Answer card ---------- */
+  #answer-area { display: none; }
+
+  .answer-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .answer-card.caution { border-left-color: var(--caution); }
+
+  .status-label {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .status-label.caution {
+    background: var(--caution-soft);
+    color: var(--caution);
+  }
+
+  .answer-text {
+    font-size: 15.5px;
+    white-space: pre-wrap;
+  }
+
+  .sources {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--text-soft);
+  }
+  .sources b { color: var(--text); font-weight: 500; }
+
+  .error-text {
+    color: #A03A2C;
+    font-size: 14.5px;
+  }
+
+  .loading {
+    color: var(--text-soft);
+    font-size: 14.5px;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    margin-top: 48px;
+    font-size: 13px;
+    color: var(--text-soft);
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header>
+    <div class="mark">+</div>
+    <div class="header-row">
+      <div>
+        <h1>Type 2 Diabetes Info Assistant</h1>
+        <p>Ask a question about Type 2 Diabetes prevention, screening, or management.</p>
+      </div>
+      <a class="nav-link" href="/dashboard">System Dashboard &rarr;</a>
+    </div>
+  </header>
+
+  <div class="ask-box">
+    <label for="question">What would you like to know?</label>
+    <textarea id="question" placeholder="e.g. What lifestyle changes help prevent type 2 diabetes?"></textarea>
+    <div class="ask-row">
+      <button class="ask" id="ask-btn" onclick="askQuestion()">Ask</button>
+    </div>
+  </div>
+
+  <div class="examples">
+    <span>Try:</span>
+    <button class="chip" onclick="askExample(this)">What is type 2 diabetes?</button>
+    <button class="chip" onclick="askExample(this)">What A1C range means prediabetes?</button>
+    <button class="chip" onclick="askExample(this)">At what age should screening start?</button>
+    <button class="chip" onclick="askExample(this)">What lifestyle changes help prevent type 2 diabetes?</button>
+    <button class="chip" onclick="askExample(this)">"What is Priya Raghunathan's contact information?"</button>
+    <button class="chip" onclick="askExample(this)">"What is the phone number for the diabetes clinic at Stanford?"</button>
+  </div>
+
+  <div id="answer-area">
+    <div class="answer-card" id="answer-card">
+      <div id="status-label" class="status-label">Answer</div>
+      <div class="answer-text" id="answer-text"></div>
+      <div class="sources" id="sources" style="display:none;"></div>
+    </div>
+  </div>
+
+  <footer>
+    General public-health information only.
+  </footer>
+
+</div>
+
+<script>
+  // Maps each backend "status" value to how it should look on the page.
+  const STATUS_STYLES = {
+    answered:          { label: "Answer",                     caution: false },
+    personal_advice:   { label: "Talk to a healthcare provider", caution: true },
+    insufficient_info: { label: "Not enough information",      caution: true },
+    refused:           { label: "Couldn't answer",             caution: true },
+  };
+
+  function askExample(button) {
+    document.getElementById("question").value = button.textContent;
+    askQuestion();
+  }
+
+  async function askQuestion() {
+    const questionBox = document.getElementById("question");
+    const question = questionBox.value.trim();
+    if (!question) return;
+
+    const askBtn = document.getElementById("ask-btn");
+    const answerArea = document.getElementById("answer-area");
+    const answerCard = document.getElementById("answer-card");
+    const answerText = document.getElementById("answer-text");
+    const statusLabel = document.getElementById("status-label");
+    const sourcesEl = document.getElementById("sources");
+
+    // Show a loading state while we wait for the server.
+    askBtn.disabled = true;
+    askBtn.textContent = "Thinking...";
+    answerArea.style.display = "block";
+    answerCard.className = "answer-card";
+    statusLabel.className = "status-label";
+    statusLabel.textContent = "Working";
+    answerText.textContent = "";
+    answerText.className = "loading";
+    answerText.textContent = "Searching sources and drafting an answer...";
+    sourcesEl.style.display = "none";
+
+    try {
+      const response = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Something went wrong on the server (e.g. missing token)
+        answerText.className = "error-text";
+        answerText.textContent = data.error || "Something went wrong. Please try again.";
+        statusLabel.textContent = "Error";
+        answerCard.classList.add("caution");
+        statusLabel.classList.add("caution");
+        return;
+      }
+
+      const style = STATUS_STYLES[data.status] || STATUS_STYLES.refused;
+      answerText.className = "answer-text";
+      answerText.textContent = data.answer;
+      statusLabel.textContent = style.label;
+      if (style.caution) {
+        answerCard.classList.add("caution");
+        statusLabel.classList.add("caution");
+      }
+
+      if (data.sources && data.sources.length > 0) {
+        sourcesEl.style.display = "block";
+        sourcesEl.innerHTML = "<b>Sources:</b> " + data.sources.join(" &middot; ");
+      } else {
+        sourcesEl.style.display = "none";
+      }
+    } catch (err) {
+      answerText.className = "error-text";
+      answerText.textContent = "Couldn't reach the server. Is app.py still running?";
+      statusLabel.textContent = "Error";
+      answerCard.classList.add("caution");
+      statusLabel.classList.add("caution");
+    } finally {
+      askBtn.disabled = false;
+      askBtn.textContent = "Ask";
+    }
+  }
+
+  // Let pressing Enter (without Shift) submit the question, like a chat box.
+  document.getElementById("question").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      askQuestion();
+    }
+  });
+</script>
+
+</body>
+</html>

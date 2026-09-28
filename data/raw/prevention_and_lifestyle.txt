@@ -1,0 +1,47 @@
+SOURCE_NAME: CDC-style Prevention Summary (paraphrased summary, not verbatim)
+
+Preventing or Delaying Type 2 Diabetes
+
+Research on structured lifestyle-change programs has repeatedly found that
+modest, sustained changes can meaningfully lower the chance that someone
+with prediabetes goes on to develop type 2 diabetes. Commonly cited targets
+from public-health prevention programs include:
+
+- Losing roughly 5 to 7 percent of body weight if starting above a healthy
+  weight range (for example, about 10 to 14 pounds for someone who weighs
+  200 pounds), achieved gradually rather than through crash dieting.
+- Getting at least 150 minutes per week of moderate-intensity physical
+  activity, such as brisk walking, spread across most days of the week.
+- Choosing more whole grains, vegetables, fruits, and lean proteins, while
+  reducing intake of sugary drinks and highly processed foods.
+- Reducing prolonged sitting time and building movement into the day where
+  possible.
+
+Structured group-based lifestyle change programs, often modeled on the
+Diabetes Prevention Program (DPP) research trial, have shown that these
+kinds of changes can reduce the relative risk of progressing from
+prediabetes to type 2 diabetes substantially over several years, in some
+studies by around half, particularly for participants who reach their
+weight and activity goals.
+
+Screening Recommendations (General Public-Health Guidance)
+
+National guidance generally recommends that adults begin routine diabetes
+screening around age 35, or earlier if they have risk factors such as
+overweight/obesity, a family history of diabetes, high blood pressure,
+a history of gestational diabetes, or belonging to a higher-risk racial or
+ethnic group. Screening is usually done with a blood test, such as a fasting
+plasma glucose test, an oral glucose tolerance test, or an A1C test, which
+reflects average blood sugar over roughly the past three months.
+
+Commonly cited general reference ranges for A1C are:
+- Below 5.7 percent: normal range
+- 5.7 percent to 6.4 percent: consistent with prediabetes
+- 6.5 percent or higher on two separate tests: consistent with diabetes
+
+These are general population reference ranges from public-health sources,
+not a diagnosis. Only a healthcare provider, using an individual's full
+test results and history, can diagnose prediabetes or diabetes.
+
+This is general public-health information only and does not replace advice
+from a qualified healthcare provider.

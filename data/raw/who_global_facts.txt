@@ -1,0 +1,40 @@
+SOURCE_NAME: WHO-style Global Fact Summary (paraphrased summary, not verbatim)
+
+Global Scale of Diabetes
+
+Diabetes has become one of the most common noncommunicable diseases
+worldwide, with the number of adults living with diabetes having risen
+substantially over recent decades, driven largely by increases in type 2
+diabetes. Low- and middle-income countries have seen the sharpest relative
+increases in recent years, partly linked to rapid changes in diet, activity
+levels, and urbanization.
+
+Diabetes is associated with a significantly increased risk of complications
+when blood sugar is not well managed over time, including cardiovascular
+disease, kidney damage, nerve damage, and eye damage that can affect vision.
+Because of this, early detection through screening and consistent
+management are emphasized as major global public-health priorities.
+
+Diabetes-Related Complications (General Information)
+
+- Cardiovascular: adults with diabetes generally have a higher risk of heart
+  disease and stroke compared with adults without diabetes.
+- Kidneys: diabetes is a leading contributor to chronic kidney disease and
+  kidney failure globally.
+- Eyes: prolonged high blood sugar can damage the small blood vessels in the
+  retina, a condition called diabetic retinopathy, which is a leading cause
+  of vision loss in working-age adults in many countries.
+- Nerves and circulation: nerve damage (neuropathy) and reduced blood flow,
+  especially in the feet, can increase the risk of injuries and infections
+  that are slow to heal.
+
+Public-Health Response
+
+International guidance generally emphasizes a combination of population-
+level prevention (encouraging healthy diets and physical activity, reducing
+tobacco and harmful alcohol use), improving access to affordable screening
+and treatment, and training healthcare systems to manage diabetes and its
+complications consistently.
+
+This is general public-health information only and does not replace advice
+from a qualified healthcare provider.
